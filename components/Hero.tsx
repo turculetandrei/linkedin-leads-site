@@ -1,50 +1,78 @@
-import { CHECKOUT_URL, hero, leads } from "@/content";
-import { LeadTable } from "./LeadTable";
-import { Window } from "./Window";
+import { CTA_LABEL, SIGNUP_URL, type Niche } from "@/content";
+import { Avatar } from "./Avatar";
 
-export function Hero() {
-  const last = hero.headline.length - 1;
+/** The morning digest: what a client actually receives. */
+function DigestCard({ niche }: { niche: Niche }) {
+  const top = niche.proof.leads.slice(0, 3);
   return (
-    <section aria-labelledby="hero-title" className="relative pt-20 sm:pt-28 lg:pt-36">
+    <figure
+      aria-label="Example of the daily hot-lead digest"
+      className="card animate-rise overflow-hidden shadow-[0_1px_2px_rgba(14,14,12,0.04),0_30px_70px_-30px_rgba(14,14,12,0.25)]"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-line px-5 py-4">
+        <div className="flex items-center gap-2.5">
+          <span className="relative flex size-2" aria-hidden="true">
+            <span className="pulse-ring absolute inset-0 rounded-full bg-accent" />
+            <span className="relative size-2 rounded-full bg-accent" />
+          </span>
+          <span className="font-medium">{niche.hero.digestTitle}</span>
+        </div>
+        <span className="font-mono text-xs text-faint">{niche.hero.digestMeta}</span>
+      </div>
+      <ul>
+        {top.map((lead) => (
+          <li key={lead.name} className="flex gap-3.5 border-b border-line px-5 py-4 last:border-b-0">
+            <Avatar name={lead.name} className="size-9 text-xs" />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-baseline justify-between gap-3">
+                <p className="truncate font-medium">{lead.name}</p>
+                <p className="shrink-0 font-mono text-sm font-medium text-accent">
+                  <span className="sr-only">Score </span>
+                  {lead.score}/10
+                </p>
+              </div>
+              <p className="truncate text-sm text-muted">
+                {lead.role}, {lead.company}
+              </p>
+              <p className="mt-1.5 line-clamp-2 text-sm leading-snug text-faint">{lead.reason}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </figure>
+  );
+}
+
+export function Hero({ niche }: { niche: Niche }) {
+  const { hero } = niche;
+  return (
+    <section aria-labelledby="hero-title" className="pt-16 pb-24 sm:pt-24 sm:pb-32 lg:pt-28">
       <div className="container-site">
+        <p className="eyebrow">{hero.eyebrow}</p>
         <h1
           id="hero-title"
-          className="text-[clamp(3.25rem,10.5vw,9.25rem)] font-semibold leading-[0.88] tracking-[-0.055em]"
+          className="mt-6 text-[clamp(3rem,8.5vw,7rem)] font-semibold leading-[0.92] tracking-[-0.055em]"
         >
-          {hero.headline.map((line, i) => (
-            <span key={line} className="block">
-              {i === last ? (
-                <>
-                  {line.replace(/\.$/, "")}
-                  <span className="text-accent">.</span>
-                </>
-              ) : (
-                line
-              )}
+          {hero.headline.map((line) => (
+            // Inline on phones so the words wrap naturally; one line each from sm
+            <span key={line} className="sm:block">
+              {line}{" "}
             </span>
           ))}
         </h1>
 
-        <div className="mt-10 flex flex-col gap-8 sm:mt-12 md:flex-row md:items-end md:justify-between">
-          <p className="max-w-[34rem] text-lg leading-relaxed text-muted text-pretty sm:text-xl">{hero.subline}</p>
-          <div className="flex shrink-0 flex-col items-start gap-3 md:items-end">
-            <a href={CHECKOUT_URL} className="btn-accent">
-              {hero.cta}
-              <span aria-hidden="true">→</span>
-            </a>
-            <p className="text-sm text-faint">{hero.note}</p>
+        <div className="mt-10 grid gap-12 lg:mt-12 lg:grid-cols-[1fr_27rem] lg:items-start lg:gap-16">
+          <div>
+            <p className="max-w-[36rem] text-lg leading-relaxed text-muted text-pretty sm:text-xl">{hero.subline}</p>
+            <div className="mt-8 flex flex-col items-start gap-3">
+              <a href={SIGNUP_URL} className="btn-accent">
+                {CTA_LABEL}
+                <span aria-hidden="true">→</span>
+              </a>
+              <p className="text-sm text-faint">{hero.note}</p>
+            </div>
           </div>
-        </div>
-
-        <div className="relative mt-16 sm:mt-20 animate-rise">
-          <Window title="output/leads-master.csv" label="Example lead list, best first">
-            <LeadTable rows={leads.slice(0, 5)} caption="Example leads, sorted by score" variant="hero" />
-          </Window>
-          {/* Fade the table into the page so it reads as the top of a longer list */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-28 rounded-b-xl bg-gradient-to-b from-transparent to-bg"
-          />
+          <DigestCard niche={niche} />
         </div>
       </div>
     </section>

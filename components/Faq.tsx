@@ -1,8 +1,9 @@
-import { faq } from "@/content";
+import type { Niche } from "@/content";
 
-export function Faq() {
+export function Faq({ niche }: { niche: Niche }) {
+  const { faq } = niche;
   return (
-    <section id="faq" aria-labelledby="faq-title" className="border-t border-line py-28 sm:py-40">
+    <section id="faq" aria-labelledby="faq-title" className="border-t border-line py-24 sm:py-32">
       <div className="container-site grid gap-12 lg:grid-cols-[1fr_2fr] lg:gap-16">
         <div>
           <p className="eyebrow">{faq.eyebrow}</p>
@@ -19,7 +20,7 @@ export function Faq() {
                 {item.q}
                 <span
                   aria-hidden="true"
-                  className="relative size-3.5 shrink-0 text-muted transition-transform duration-300 group-open:rotate-45"
+                  className="relative size-3.5 shrink-0 text-faint transition-transform duration-300 group-open:rotate-45"
                 >
                   <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-current" />
                   <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-current" />

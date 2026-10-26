@@ -1,40 +1,48 @@
-import { CHECKOUT_URL, nav, PRODUCT_NAME } from "@/content";
+import { LOGIN_URL, nav, PRODUCT_NAME, SIGNUP_URL } from "@/content";
 
-export function Logo() {
+/** Concentric rings with a hot centre: the working mark for the product. */
+export function Logo({ className = "size-6" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" className="size-6" aria-hidden="true">
-      <rect width="32" height="32" rx="8" fill="#111" stroke="#2e2e2e" />
-      <rect x="7" y="9" width="18" height="3" rx="1.5" fill="#c8f05a" />
-      <rect x="7" y="15" width="13" height="3" rx="1.5" fill="#ededed" />
-      <rect x="7" y="21" width="8" height="3" rx="1.5" fill="#7a7a7a" />
+    <svg viewBox="0 0 32 32" className={className} aria-hidden="true">
+      <rect width="32" height="32" rx="8" fill="#0e0e0c" />
+      <circle cx="16" cy="16" r="9" fill="none" stroke="#faf9f6" strokeWidth="2" opacity=".35" />
+      <circle cx="16" cy="16" r="5" fill="none" stroke="#faf9f6" strokeWidth="2" opacity=".7" />
+      <circle cx="16" cy="16" r="2.25" fill="#e8562a" />
     </svg>
   );
 }
 
-export function Header() {
+/** Sticky top bar. `links` is false on pages without the landing sections (e.g. /welcome). */
+export function Header({ links = true }: { links?: boolean }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-bg/75 backdrop-blur-md">
-      <div className="container-site flex h-16 items-center justify-between">
-        <a href="#top" className="flex items-center gap-2.5 font-semibold tracking-[-0.02em]">
+    <header className="sticky top-0 z-50 border-b border-line bg-bg/80 backdrop-blur-md">
+      <div className="container-site flex h-16 items-center justify-between gap-4">
+        <a href="/" className="flex items-center gap-2.5 font-semibold tracking-[-0.02em]">
           <Logo />
           {PRODUCT_NAME}
         </a>
         <nav aria-label="Main" className="flex items-center gap-1 sm:gap-2">
-          {nav.links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="hidden rounded-full px-3 py-2 text-sm text-muted transition-colors hover:text-fg sm:block"
-            >
-              {link.label}
-            </a>
-          ))}
-          <a
-            href={CHECKOUT_URL}
-            className="ml-2 rounded-full border border-line-strong px-4 py-2 text-sm font-medium transition-colors hover:border-fg/40"
-          >
-            {nav.cta}
+          {links &&
+            nav.links.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="hidden rounded-full px-3 py-2 text-sm text-muted transition-colors hover:text-fg md:block"
+              >
+                {link.label}
+              </a>
+            ))}
+          <a href={LOGIN_URL} className="rounded-full px-3 py-2 text-sm text-muted transition-colors hover:text-fg">
+            {nav.login}
           </a>
+          {links && (
+            <a
+              href={SIGNUP_URL}
+              className="hidden rounded-full bg-fg px-4 py-2 text-sm font-medium text-bg transition-opacity hover:opacity-85 sm:block"
+            >
+              {nav.ctaShort}
+            </a>
+          )}
         </nav>
       </div>
     </header>

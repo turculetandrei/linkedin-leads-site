@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
   // site/ has its own lockfile; without this Next picks the scraper's folder as the root
   turbopack: { root: fileURLToPath(new URL(".", import.meta.url)) },
   agentRules: false,
+  // Inline the (small) Tailwind CSS into the HTML: one less render-blocking request before first paint
+  experimental: { inlineCss: true },
 };
 
 export default nextConfig;
