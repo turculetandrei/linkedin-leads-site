@@ -2,11 +2,11 @@
 
 Landing page for Glowlist, a managed service that turns the people who engage with competitors' LinkedIn posts into scored, warm leads.
 
-Every person and company in the sample leads is invented. The engagement averages are real aggregates.
+Every person and company in the sample leads is invented.
 
 ## Stack
 
-Next.js (App Router, static export), TypeScript, Tailwind CSS 4, Motion. No backend.
+Next.js (App Router, static export), TypeScript, CSS Modules, Inter via `next/font`. Tailwind is only used for the base reset in `app/globals.css`. No backend.
 
 ## Run
 
@@ -18,25 +18,14 @@ npm run build    # static site in out/
 
 ## Content
 
-All copy, prices, limits, links and placeholders are in `content.ts`. Search it for `PLACEHOLDER` and `TODO`.
-
-**Niche pages:**
-- Each key in `niches` gets its own page at `/<key>`.
-- `/` shows the Glowlist landing; its copy (EN/RO) lives in `components/Landing.tsx`, not `content.ts`.
-- To add a niche, add an entry with the `Niche` type; the page is generated at build time.
+All copy (EN and RO), sample leads, prices and links are in `components/Landing.tsx`. Links still to fill in before launch are in its `LINKS` object. The page is `noindex, nofollow` (set in `app/layout.tsx`) until the placeholders are gone.
 
 ## Structure
 
 | Path | What it is |
 |---|---|
-| `content.ts` | All copy and settings: product name, links, pricing, bonuses, guarantee, niche pages |
-| `app/page.tsx` | `/`: the Glowlist landing (`components/Landing.tsx`) |
-| `app/[niche]/page.tsx` | `/agencies` and any future niche |
-| `app/welcome/page.tsx` | Post-payment page with the "Book your setup call" button |
-| `components/NichePage.tsx` | The section order for a niche page |
-| `components/Hero.tsx` | Headline, CTA, daily digest card |
-| `components/Sections.tsx` | Outcome, proof, effort, sources |
-| `components/Speed.tsx` | The 24-hour timeline |
-| `components/Offer.tsx` | Bonuses, guarantee, pricing |
-| `components/LeadTable.tsx` | Sample leads table (stacked list on phones) |
-| `components/Faq.tsx`, `Closing.tsx` | FAQ, final CTA, footer |
+| `app/page.tsx` | `/`: renders the landing |
+| `app/layout.tsx` | Inter font (`--font-inter`), title, robots |
+| `app/icon.svg` | Favicon |
+| `components/Landing.tsx` | The whole page: copy, lead inbox, compare, pricing, bonuses, guarantee, FAQ |
+| `components/Landing.module.css` | Its styles |
