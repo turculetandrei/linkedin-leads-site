@@ -4,7 +4,7 @@
 // Search for "PLACEHOLDER" and "TODO" to find what still needs real values.
 
 /** Working name. Change it here and it changes everywhere. */
-export const PRODUCT_NAME = "Heatseeker";
+export const PRODUCT_NAME = "Glowlist";
 
 /** PLACEHOLDER: the site's final address (used for canonical links). */
 export const SITE_URL = "https://linkedin-leads-site.vercel.app";

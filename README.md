@@ -1,6 +1,6 @@
-# Heatseeker: landing page
+# Glowlist: landing page
 
-Landing page for Heatseeker (working name), a managed service that turns the people who engage with competitors' LinkedIn posts into scored, warm leads.
+Landing page for Glowlist, a managed service that turns the people who engage with competitors' LinkedIn posts into scored, warm leads.
 
 Every person and company in the sample leads is invented. The engagement averages are real aggregates.
 
@@ -22,7 +22,7 @@ All copy, prices, limits, links and placeholders are in `content.ts`. Search it 
 
 **Niche pages:**
 - Each key in `niches` gets its own page at `/<key>`.
-- `/` shows `DEFAULT_NICHE`.
+- `/` shows the Glowlist landing; its copy (EN/RO) lives in `components/Landing.tsx`, not `content.ts`.
 - To add a niche, add an entry with the `Niche` type; the page is generated at build time.
 
 ## Structure
@@ -30,7 +30,7 @@ All copy, prices, limits, links and placeholders are in `content.ts`. Search it 
 | Path | What it is |
 |---|---|
 | `content.ts` | All copy and settings: product name, links, pricing, bonuses, guarantee, niche pages |
-| `app/page.tsx` | `/`: the default niche |
+| `app/page.tsx` | `/`: the Glowlist landing (`components/Landing.tsx`) |
 | `app/[niche]/page.tsx` | `/agencies` and any future niche |
 | `app/welcome/page.tsx` | Post-payment page with the "Book your setup call" button |
 | `components/NichePage.tsx` | The section order for a niche page |
