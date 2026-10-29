@@ -3,14 +3,14 @@
 import { useEffect, useState } from 'react';
 import s from './Landing.module.css';
 
-/* Glowlist landing — ported 1:1 from the Claude Design canvas (v10).
-   Bilingual (EN/RO). The lead inbox is interactive: filter + click a person to see details.
-   All people shown are invented. */
+/* Glowlist landing — from the Claude Design canvas (v10), simplified for sales:
+   hero, proof, how it works, pricing (with bonuses and guarantee), FAQ. Bilingual (EN/RO).
+   The lead inbox is interactive: filter + click a person. All people shown are invented. */
 
 const ACCENT = '#e2531c';
 
 // Fill these in before launch
-const LINKS = { sample: '#sample', book: '#book', login: '#login', privacy: '#privacy', terms: '#terms', linkedin: '#' };
+const LINKS = { sample: '#sample', privacy: '#privacy', terms: '#terms', linkedin: '#' };
 
 type Lang = 'en' | 'ro';
 type Filter = 'all' | 'hot' | 'commented';
@@ -19,12 +19,13 @@ type L10n = Record<Lang, string>;
 
 const T = {
   en: {
-    navHow: 'How it works', navPricing: 'Pricing', navLogin: 'Log in', navSample: 'Free sample',
+    navPricing: 'Pricing', navSample: 'Free sample',
     badge: 'For B2B agencies',
     h1: "Your competitors' audience, scored and ready to call.",
-    sub: "We watch who likes, comments and reshares in your niche. AI tells you who's worth a call, and why.",
-    inputLabel: 'Competitor LinkedIn page', cta: 'Get your free lead sample', cta2: 'Book your setup call',
+    sub: "Book calls with people who are already interested in what you sell. We find who engages with your competitors on LinkedIn, and AI tells you who's worth a call, and why.",
+    inputLabel: 'Competitor LinkedIn page', cta: 'Get your free lead sample',
     ctaNote: 'No card. No call. First leads in 24h.',
+    seePricing: 'Or see pricing — from €490/year',
     previewLabel: 'Product preview', people: 'people', last7: 'last 7 days',
     tAll: 'All', tHot: 'Hot 8+', tCom: 'Commented',
     example: 'Example data. Names are invented.',
@@ -32,22 +33,15 @@ const T = {
     tierHot: 'Hot lead — reach out today', tierWarm: 'Warm lead — worth a message', tierCold: 'Cold — keep an eye on them',
     stNew: 'New', stDone: 'Contacted', score: 'Score',
     verbs: { c: 'Commented', l: 'Liked', s: 'Reshared' },
-    cmpTitle: 'Stop calling strangers.',
-    cmpSub: 'Bought lists are cold. The people engaging with your niche right now are not.',
-    coldTitle: 'Bought lists',
-    coldItems: ['People who have never heard of you', 'The same list your competitors bought', 'Hours of research before every message', 'Data that goes stale in weeks'],
-    warmItems: ['People who just engaged with your niche', 'A fresh list every morning', 'Every lead scored, with the reason', 'Zero research. Just reach out'],
-    howTitle: 'Add a page once. Leads show up every morning.',
-    watching: 'Watching', p312: '312 people', p188: '188 people', p97: '97 people',
-    s1t: '1. Pick who to watch', s1d: 'Your competitors, your own page, the voices in your niche.',
     postQuote: '“Cold outreach is dead. Here’s what we do instead →”',
-    reactions: 'Reactions', comments: 'Comments', reshares: 'Reshares',
-    s2t: '2. We collect every signal', s2d: 'Every new post, every person who engaged with it.',
-    mayaReason: 'Runs a 12-person agency and asked which outbound tools actually work.',
-    s3t: '3. AI scores. You call.', s3d: 'A 1–10 score and the reason, for every person.',
     n275: '27.5', st1: 'reactions per post, on average', st2: 'new people found per post', st3: 'from signup to first leads', st4: 'logins to your LinkedIn',
-    bonusTitle: 'Everything you get, on every plan.',
-    bonusSub: 'Set up with you, tuned to your ideal client, delivered daily.',
+    howTitle: 'Live after one call. Leads every morning.',
+    steps: [
+      { t: 'Tell us who to watch', d: 'We watch your own page, your competitors and the influencers in your niche.' },
+      { t: '20-minute setup call', d: 'Everything is included. We set it up with you and tune the AI to your ideal client.' },
+      { t: 'Call the warm ones', d: 'Your first leads within 24 hours, each with a score and the reason.' },
+    ],
+    bonusTitle: 'Included in both plans',
     totalValue: 'Total value', included: 'Included',
     bonuses: [
       { name: 'Competitor Audience Map', desc: 'Who engages with your top competitors', value: '€290' },
@@ -76,12 +70,13 @@ const T = {
     privacy: 'Privacy', terms: 'Terms',
   },
   ro: {
-    navHow: 'Cum funcționează', navPricing: 'Prețuri', navLogin: 'Intră în cont', navSample: 'Mostră gratuită',
+    navPricing: 'Prețuri', navSample: 'Mostră gratuită',
     badge: 'Pentru agenții B2B',
     h1: 'Publicul competitorilor tăi, punctat și gata de sunat.',
-    sub: 'Urmărim cine apreciază, comentează și distribuie în nișa ta. AI-ul îți spune pe cine merită să suni și de ce.',
-    inputLabel: 'Pagina de LinkedIn a unui competitor', cta: 'Primește mostra gratuită', cta2: 'Programează apelul de setup',
+    sub: 'Programează call-uri cu oameni deja interesați de ce vinzi. Găsim cine interacționează cu competitorii tăi pe LinkedIn, iar AI-ul îți spune pe cine merită să suni și de ce.',
+    inputLabel: 'Pagina de LinkedIn a unui competitor', cta: 'Primește mostra gratuită',
     ctaNote: 'Fără card. Fără apel. Primele leads în 24h.',
+    seePricing: 'Sau vezi prețurile — de la €490/an',
     previewLabel: 'Previzualizare produs', people: 'persoane', last7: 'ultimele 7 zile',
     tAll: 'Toți', tHot: 'Fierbinți 8+', tCom: 'Au comentat',
     example: 'Date de exemplu. Numele sunt inventate.',
@@ -89,22 +84,15 @@ const T = {
     tierHot: 'Lead fierbinte — scrie-i azi', tierWarm: 'Lead cald — merită un mesaj', tierCold: 'Rece — de urmărit',
     stNew: 'Nou', stDone: 'Contactat', score: 'Scor',
     verbs: { c: 'A comentat', l: 'A apreciat', s: 'A distribuit' },
-    cmpTitle: 'Nu mai suna străini.',
-    cmpSub: 'Listele cumpărate sunt reci. Oamenii care interacționează acum în nișa ta nu sunt.',
-    coldTitle: 'Liste cumpărate',
-    coldItems: ['Oameni care n-au auzit niciodată de tine', 'Aceeași listă pe care au cumpărat-o și competitorii', 'Ore de documentare înainte de fiecare mesaj', 'Date care se învechesc în câteva săptămâni'],
-    warmItems: ['Oameni care tocmai au interacționat în nișa ta', 'O listă nouă în fiecare dimineață', 'Fiecare lead cu scor și motiv', 'Zero documentare. Doar scrie-le'],
-    howTitle: 'Adaugi o pagină o dată. Leads noi în fiecare dimineață.',
-    watching: 'Urmărite', p312: '312 persoane', p188: '188 persoane', p97: '97 persoane',
-    s1t: '1. Alegi pe cine urmărim', s1d: 'Competitorii, pagina ta, vocile din nișa ta.',
     postQuote: '„Cold outreach-ul a murit. Uite ce facem în schimb →”',
-    reactions: 'Reacții', comments: 'Comentarii', reshares: 'Distribuiri',
-    s2t: '2. Colectăm fiecare semnal', s2d: 'Fiecare postare nouă, fiecare om care a interacționat cu ea.',
-    mayaReason: 'Conduce o agenție de 12 oameni și a întrebat ce unelte de outbound chiar funcționează.',
-    s3t: '3. AI-ul dă scorul. Tu suni.', s3d: 'Un scor de la 1 la 10 și motivul, pentru fiecare persoană.',
     n275: '27,5', st1: 'reacții pe postare, în medie', st2: 'persoane noi găsite pe postare', st3: 'de la cont la primele leads', st4: 'logări în LinkedIn-ul tău',
-    bonusTitle: 'Tot ce primești, la orice plan.',
-    bonusSub: 'Configurat împreună cu tine, adaptat clientului tău ideal, livrat zilnic.',
+    howTitle: 'Gata după un apel. Leads în fiecare dimineață.',
+    steps: [
+      { t: 'Ne spui pe cine urmărim', d: 'Urmărim pagina ta, competitorii și influencerii din nișa ta.' },
+      { t: 'Apel de setup de 20 de minute', d: 'Totul e inclus. Configurăm împreună cu tine și adaptăm AI-ul la clientul tău ideal.' },
+      { t: 'Îi suni pe cei calzi', d: 'Primele leads în 24 de ore, fiecare cu scor și motiv.' },
+    ],
+    bonusTitle: 'Incluse în ambele planuri',
     totalValue: 'Valoare totală', included: 'Inclus',
     bonuses: [
       { name: 'Competitor Audience Map', desc: 'Cine interacționează cu principalii tăi competitori', value: '€290' },
@@ -194,9 +182,6 @@ function ActIcon({ k }: { k: Kind }) {
   return <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7v6H2.5V7zM5 7l2.5-4.5c1 0 1.7.8 1.5 1.8L8.6 6.5h3.9c.9 0 1.5.8 1.3 1.7l-.9 3.6c-.2.7-.8 1.2-1.5 1.2H5" fill="none" stroke="#404040" strokeWidth="1.4" strokeLinejoin="round" /></svg>;
 }
 
-const Cross = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" className={s.listIcon}><circle cx="10" cy="10" r="9" fill="#ececec" /><path d="M7 7l6 6M13 7l-6 6" stroke="#a3a3a3" strokeWidth="1.6" strokeLinecap="round" /></svg>
-);
 const Check = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" className={s.listIcon}><circle cx="10" cy="10" r="9" fill={ACCENT} /><path d="M6 10.2l2.6 2.6L14 7.4" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
 );
@@ -346,9 +331,7 @@ export default function Landing() {
         <div className={`${s.wrap} ${s.headerIn}`}>
           <a href="#top" className={s.brand}><Mark /><span className={s.brandName}>glowlist</span></a>
           <nav aria-label="Main" className={s.nav}>
-            <a href="#how" className={s.navLink}>{t.navHow}</a>
             <a href="#pricing" className={s.navLink}>{t.navPricing}</a>
-            <a href={LINKS.login} className={s.navLink}>{t.navLogin}</a>
             <Segmented label="Language" small value={lang} onChange={setLang}
               options={[{ id: 'en', label: 'EN' }, { id: 'ro', label: 'RO' }]} />
             <a href={LINKS.sample} className={s.btnDark}>{t.navSample}</a>
@@ -357,7 +340,7 @@ export default function Landing() {
       </header>
 
       <main id="top">
-        {/* hero */}
+        {/* hero: the promise, the free sample, a shortcut to the price */}
         <section className={`${s.wrap} ${s.hero}`}>
           <span className={s.badge}>{t.badge}</span>
           <h1 className={s.h1}>{t.h1}</h1>
@@ -368,107 +351,61 @@ export default function Landing() {
             <button type="submit" className={s.btnAccent}>{t.cta}</button>
           </form>
           <p className={s.note}>{t.ctaNote}</p>
+          <a href="#pricing" className={s.priceLink}>{t.seePricing} <span aria-hidden="true">↓</span></a>
         </section>
 
-        {/* product */}
+        {/* proof: scored leads with the AI's reason, then the real numbers */}
         <section aria-label={t.previewLabel} className={`${s.wrap} ${s.preview}`}>
           <LeadInbox lang={lang} />
           <p className={s.example}>{t.example}</p>
-        </section>
-
-        {/* compare */}
-        <section aria-labelledby="cmp" className={s.bordered}>
-          <div className={`${s.wrap} ${s.section}`}>
-            <div className={s.intro}>
-              <h2 id="cmp" className={s.h2}>{t.cmpTitle}</h2>
-              <p className={s.lead2}>{t.cmpSub}</p>
-            </div>
-            <div className={s.cmpGrid}>
-              <div className={s.cmpCold}>
-                <span className={s.cmpHead}>{t.coldTitle}</span>
-                <ul className={s.checkList}>{t.coldItems.map((x) => <li key={x}><Cross />{x}</li>)}</ul>
-              </div>
-              <div className={s.cmpWarm}>
-                <span className={s.cmpHeadWarm}><Mark size={20} onDark glow={false} />Glowlist</span>
-                <ul className={s.checkList}>{t.warmItems.map((x) => <li key={x}><Check />{x}</li>)}</ul>
-              </div>
-            </div>
+          <div className={s.stats}>
+            {[{ n: t.n275, l: t.st1 }, { n: '~23', l: t.st2 }, { n: '24h', l: t.st3 }, { n: '0', l: t.st4 }].map((x) => (
+              <div key={x.l}><div className={s.statNum}>{x.n}</div><div className={s.statLabel}>{x.l}</div></div>
+            ))}
           </div>
         </section>
 
-        {/* how */}
+        {/* how: sources, effort, speed */}
         <section id="how" aria-labelledby="how-title" className={`${s.bordered} ${s.grey}`}>
           <div className={`${s.wrap} ${s.section}`}>
             <h2 id="how-title" className={s.h2} style={{ maxWidth: 680 }}>{t.howTitle}</h2>
-            <div className={s.steps}>
-              <div className={s.step}>
-                <div className={s.panel}>
-                  <div className={s.panelHead}>{t.watching}</div>
-                  {[
-                    { ab: 'BW', name: 'Brightwave Agency', n: t.p312, cls: s.srcIconDark },
-                    { ab: 'AG', name: 'Ana · Growth', n: t.p188, cls: s.srcIconRound },
-                    { ab: 'KS', name: 'Kestrel Sales', n: t.p97, cls: s.srcIcon },
-                  ].map((r) => (
-                    <div key={r.ab} className={s.srcRow}>
-                      <span className={r.cls}>{r.ab}</span>
-                      <span className={s.srcName}>{r.name}</span>
-                      <span className={s.srcCount}>{r.n}</span>
-                    </div>
-                  ))}
-                </div>
-                <div><h3 className={s.stepTitle}>{t.s1t}</h3><p className={s.stepText}>{t.s1d}</p></div>
-              </div>
-
-              <div className={s.step}>
-                <div className={`${s.panel} ${s.panelPad}`}>
-                  <p className={s.postQuote}>{t.postQuote}</p>
-                  <div className={s.bars}>
-                    {[
-                      { label: t.reactions, w: '86%', n: 214 },
-                      { label: t.comments, w: '24%', n: 38 },
-                      { label: t.reshares, w: '9%', n: 12 },
-                    ].map((b) => (
-                      <div key={b.n} className={s.barRow}>
-                        <span className={s.barLabel}>{b.label}</span>
-                        <div className={s.barTrack}><div className={s.barFill} style={{ width: b.w }} /></div>
-                        <span className={s.barNum}>{b.n}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div><h3 className={s.stepTitle}>{t.s2t}</h3><p className={s.stepText}>{t.s2d}</p></div>
-              </div>
-
-              <div className={s.step}>
-                <div className={`${s.panel} ${s.panelPad}`}>
-                  <div className={s.miniTop}>
-                    <span className={s.monoSm}>ML</span>
-                    <div className={s.miniWho}><span className={s.miniName}>Maya Lindqvist</span><span className={s.miniRole}>Founder · Northpeak Studio</span></div>
-                    <span className={s.miniScore}>9<span>/10</span></span>
-                  </div>
-                  <div className={s.miniTrack}><div style={{ width: '90%', background: ACCENT }} /></div>
-                  <p className={s.miniWhy}>{t.mayaReason}</p>
-                </div>
-                <div><h3 className={s.stepTitle}>{t.s3t}</h3><p className={s.stepText}>{t.s3d}</p></div>
-              </div>
-            </div>
-
-            <div className={s.stats}>
-              {[{ n: t.n275, l: t.st1 }, { n: '~23', l: t.st2 }, { n: '24h', l: t.st3 }, { n: '0', l: t.st4 }].map((x) => (
-                <div key={x.l}><div className={s.statNum}>{x.n}</div><div className={s.statLabel}>{x.l}</div></div>
+            <ol className={s.steps}>
+              {t.steps.map((x, i) => (
+                <li key={x.t} className={s.step}>
+                  <span className={s.stepNum} aria-hidden="true">{i + 1}</span>
+                  <h3 className={s.stepTitle}>{x.t}</h3>
+                  <p className={s.stepText}>{x.d}</p>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
         </section>
 
-        {/* bonuses */}
-        <section aria-labelledby="bonus-title" className={s.bordered}>
-          <div className={`${s.wrap} ${s.section} ${s.bonusWrap}`}>
-            <div className={s.bonusIntro}>
-              <h2 id="bonus-title" className={s.h2}>{t.bonusTitle}</h2>
-              <p className={s.lead2}>{t.bonusSub}</p>
+        {/* pricing, with the bonus stack and the guarantee right under the plans */}
+        <section id="pricing" aria-labelledby="pricing-title">
+          <div className={`${s.wrap} ${s.section} ${s.pricing}`}>
+            <div className={s.center}>
+              <h2 id="pricing-title" className={s.h2}>{t.priceTitle}</h2>
+              <p className={s.lead2}>{t.anchor}</p>
             </div>
+            <div className={s.plans}>
+              <div className={`${s.plan} ${s.planFeatured}`}>
+                <div className={s.planHead}><h3 className={s.planName}>Founding</h3><span className={s.spots}>{t.spots}</span></div>
+                <div className={s.price}><span className={s.priceNum}>€490</span><span className={s.priceOld}>€990</span><span className={s.per}>{t.perYear}</span></div>
+                <ul className={s.features}>{t.founding.map((x) => <li key={x}><Check />{x}</li>)}</ul>
+                <a href={LINKS.sample} className={s.btnAccentBlock}>{t.cta}</a>
+              </div>
+              <div className={s.plan}>
+                <div className={s.planHead}><h3 className={s.planName}>Standard</h3></div>
+                <div className={s.price}><span className={s.priceNum}>€990</span><span className={s.per}>{t.perYear}</span></div>
+                <ul className={s.features}>{t.standard.map((x) => <li key={x}><Check />{x}</li>)}</ul>
+                <a href={LINKS.sample} className={s.btnOutline}>{t.cta}</a>
+              </div>
+            </div>
+            <p className={s.priceSub}>{t.priceSub}</p>
+
             <div className={s.receipt}>
+              <h3 className={s.receiptHead}>{t.bonusTitle}</h3>
               {t.bonuses.map((b) => (
                 <div key={b.name} className={s.bRow}>
                   <div className={s.bText}><span className={s.bName}>{b.name}</span><span className={s.bDesc}>{b.desc}</span></div>
@@ -480,42 +417,14 @@ export default function Landing() {
                 <span className={s.bIncluded}>{t.included}</span>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* guarantee */}
-        <section aria-labelledby="g-title" className={s.gOuter}>
-          <div className={s.guarantee}>
-            <div className={s.gNum}>50</div>
-            <div className={s.gText}>
-              <h2 id="g-title" className={s.gTitle}>{t.gTitle}</h2>
-              <p>{t.gText}</p>
-            </div>
-          </div>
-        </section>
-
-        {/* pricing */}
-        <section id="pricing" aria-labelledby="pricing-title">
-          <div className={`${s.wrap} ${s.section} ${s.pricing}`}>
-            <div className={s.center}>
-              <h2 id="pricing-title" className={s.h2}>{t.priceTitle}</h2>
-              <p className={s.lead2}>{t.anchor}</p>
-            </div>
-            <div className={s.plans}>
-              <div className={`${s.plan} ${s.planFeatured}`}>
-                <div className={s.planHead}><h3 className={s.planName}>Founding</h3><span className={s.spots}>{t.spots}</span></div>
-                <div className={s.price}><span className={s.priceNum}>€490</span><span className={s.priceOld}>€990</span><span className={s.per}>{t.perYear}</span></div>
-                <ul className={s.features}>{t.founding.map((x) => <li key={x}>{x}</li>)}</ul>
-                <a href={LINKS.sample} className={s.btnAccentBlock}>{t.cta}</a>
-              </div>
-              <div className={s.plan}>
-                <div className={s.planHead}><h3 className={s.planName}>Standard</h3></div>
-                <div className={s.price}><span className={s.priceNum}>€990</span><span className={s.per}>{t.perYear}</span></div>
-                <ul className={s.features}>{t.standard.map((x) => <li key={x}>{x}</li>)}</ul>
-                <a href={LINKS.sample} className={s.btnOutline}>{t.cta}</a>
+            <div className={s.guarantee}>
+              <div className={s.gNum}>50</div>
+              <div className={s.gText}>
+                <h3 className={s.gTitle}>{t.gTitle}</h3>
+                <p>{t.gText}</p>
               </div>
             </div>
-            <p className={s.priceSub}>{t.priceSub}</p>
           </div>
         </section>
 
@@ -534,15 +443,12 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* final */}
+        {/* final: one action. "Book your setup call" comes after payment, not here */}
         <section aria-labelledby="cta" className={s.final}>
           <div className={`${s.wrap} ${s.finalIn}`}>
             <h2 id="cta" className={s.finalTitle}>{t.finalTitle}</h2>
             <p className={s.finalSub}>{t.finalSub}</p>
-            <div className={s.finalBtns}>
-              <a href={LINKS.sample} className={s.btnAccentInline}>{t.cta}</a>
-              <a href={LINKS.book} className={s.btnGhostDark}>{t.cta2}</a>
-            </div>
+            <a href={LINKS.sample} className={s.btnAccentInline}>{t.cta}</a>
           </div>
         </section>
       </main>
